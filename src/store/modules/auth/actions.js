@@ -3,7 +3,7 @@ export default {
   async register(context, payload) {
 
     let response = await fetch(
-      `${context.rootState.backendUrl}/register`,
+      `${context.rootState.backendUrl}/users//register`,
       {
         headers: {
           'Content-Type': 'application/json'
@@ -20,7 +20,7 @@ export default {
     }
 
     const token = responseData.token;
-    response = await fetch(`${context.rootState.backendUrl}/user`, {
+    response = await fetch(`${context.rootState.backendUrl}/users`, {
       headers: {
         'Authorization': token
       },
@@ -41,7 +41,7 @@ export default {
 
   async login(context, payload) {
     let response = await fetch(
-      `${context.rootState.backendUrl}/login`,
+      `${context.rootState.backendUrl}/users/login`,
       {
         headers: {
           'Content-Type': 'application/json'
@@ -57,7 +57,7 @@ export default {
       throw error;
     }
     const token = responseData.token;
-    response = await fetch(`${context.rootState.backendUrl}/user`, {
+    response = await fetch(`${context.rootState.backendUrl}/users`, {
       headers: {
         'Authorization': token
       },
@@ -82,7 +82,7 @@ export default {
     const token = payload.token;
     const data = { budget: payload.budget, goals: payload.goals };
     await fetch(
-      `${context.rootState.backendUrl}/updateBudgetGoals`,
+      `${context.rootState.backendUrl}/incomeExpenses/updateBudgetGoals`,
       {
         headers: {
           "Authorization": token,

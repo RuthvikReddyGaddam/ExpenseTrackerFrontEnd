@@ -76,7 +76,7 @@ export default {
      try{
        const formData = new FormData();
       formData.append("profile", this.$refs.profile.files[0]);
-      const response = await fetch(`${this.$store.getters.backendUrl}/uploadProfile`, {
+      const response = await fetch(`${this.$store.getters.backendUrl}/users/uploadProfile`, {
         method: "POST",
         headers: { Authorization: this.token },
         body: formData,

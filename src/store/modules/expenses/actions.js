@@ -3,7 +3,7 @@ export default {
     const token = payload.token;
 
     const response = await fetch(
-      `${context.rootState.backendUrl}/deleteExpense`,
+      `${context.rootState.backendUrl}/incomeExpenses/deleteExpense`,
       {
         headers: {
           'Authorization': token,
@@ -22,7 +22,7 @@ export default {
 
   async addExpense(context, payload) {
     const token = payload.token;
-    const response = await fetch(`${context.rootState.backendUrl}/newExpense`, {
+    const response = await fetch(`${context.rootState.backendUrl}/incomeExpenses/newExpense`, {
       method: 'POST',
       headers: {
         'Authorization': token,
@@ -44,7 +44,7 @@ export default {
   async loadExpenses(context, payload) {
     const token = payload.token;
     const response = await fetch(
-      `${context.rootState.backendUrl}/expenses`,
+      `${context.rootState.backendUrl}/incomeExpenses/expenses`,
       {
         headers: {
           'Authorization': token
@@ -81,7 +81,7 @@ export default {
   async setExpenseCategories(context, payload){
     const token = payload.token;
     const response = await fetch(
-      `${context.rootState.backendUrl}/categories/expenses`,
+      `${context.rootState.backendUrl}/incomeExpenses/categories/expenses`,
       {
         headers: {
           'Authorization': token

@@ -90,7 +90,7 @@ export default {
     async uploadReceipt() {
       const formData = new FormData();
       formData.append("receipt", this.$refs.receipt.files[0]);
-      const response = await fetch(`${this.$store.getters.backendUrl}/uploadImage`, {
+      const response = await fetch(`${this.$store.getters.backendUrl}/incomeExpenses/uploadImage`, {
         method: "POST",
         headers: { Authorization: this.token },
         body: formData,
