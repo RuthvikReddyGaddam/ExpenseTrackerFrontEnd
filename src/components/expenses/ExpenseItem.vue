@@ -1,7 +1,7 @@
 <template>
   <li class="list-item">
     <div class="item-content">
-      <base-modal :receipt="receipt">
+      <base-modal :imageAddress="receipt">
       <img :src="receipt" alt="Image" class="item-image" />
     </base-modal>
       <div class="text-elements">
@@ -23,14 +23,13 @@ export default {
     "category",
     "paymentType",
     "receipt",
-    "date"
+    "date",
+    "token"
   ],
-  data() {
-    return {};
-  },
   methods: {
     deleteExpense(_id) {
-      this.$store.dispatch('expenses/deleteExpense', {_id});
+      this.$store.dispatch('auth/updateBalance', {type: "income", amount: this.amount});
+      this.$store.dispatch('expenses/deleteExpense', {_id: _id, token: this.token, amount: this.amount});
     }
   }
 };

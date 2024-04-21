@@ -1,12 +1,12 @@
 <template>
   <li class="list-item">
     <div class="item-content">
-      <img :src="incomeImage" alt="Image" class="item-image" />
+      <base-modal :showModal="false"></base-modal>
       <div class="text-elements">
         <h3>{{ title }}</h3>
         <p>{{ description }} {{ amount }} {{ category }} {{ date }}</p>
       </div>
-      <button class="delete-button">Delete</button>
+      <button class="delete-button" @click="deleteIncome(_id)">Delete</button>
     </div>
   </li>
 
@@ -14,19 +14,31 @@
 
 <script>
 export default {
+
   props: [
     "title",
     "description",
     "amount",
     "category",
+    "categoryId",
     "paymentType",
     "incomeImage",
-    "date"
-
+    "date",
+    "token",
+    "_id"
   ],
-  data() {
-    return {};
-  },
+computed: {
+  imageAddress() {
+
+    return `/${this.categoryId}.png`
+  }
+},
+methods: {
+  deleteIncome(_id){
+    this.$store.dispatch('auth/updateBalance', {type: "expense", amount: this.amount});
+    this.$store.dispatch("income/deleteIncome", {_id: _id, token: this.token, amount: this.amount})
+  }
+}
 };
 </script>
 

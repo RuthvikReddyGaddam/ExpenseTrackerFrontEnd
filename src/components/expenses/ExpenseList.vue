@@ -1,6 +1,7 @@
 <template>
   <div class="ul-container">
-    <ul>
+    <h2 v-if="expenses.length === 0">No expense data found!</h2>
+    <ul v-else>
       <expense-item
         v-for="expense in expenses"
         :key="expense._id"
@@ -8,10 +9,11 @@
         :title="expense.title"
         :description="expense.description"
         :amount="expense.amount"
-        :category="expense.category_id"
+        :category="expense.categoryId.categoryName"
         :paymentType="expense.paymentType"
         :receipt="expense.receipt"
         :date="dateString(expense.date)"
+        :token="token"
       ></expense-item>
     </ul>
   </div>
@@ -19,8 +21,10 @@
 
 <script>
 import ExpenseItem from "./ExpenseItem.vue";
+
 export default {
   components: { ExpenseItem },
+  props: ["token"],
   data() {
     return {};
   },
@@ -40,7 +44,13 @@ export default {
         return dateItem;
       } else return "";
     },
+    async loadExpenses() {
+      await this.$store.dispatch("expenses/loadExpenses", {token: this.token});
+    }
   },
+  created() {
+    this.loadExpenses();
+  }
 };
 </script>
 

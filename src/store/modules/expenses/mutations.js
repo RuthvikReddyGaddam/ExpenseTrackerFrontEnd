@@ -1,6 +1,5 @@
 export default {
     addExpense(state, payload){
-
     state.expenses.push(payload);
     },
     deleteExpense(state, payload){
@@ -8,6 +7,15 @@ export default {
         state.expenses.splice(index,1);
     },
     filteredExpenses(state, payload){
+        state.filteredExpenses = [];
         state.filteredExpenses = payload;
+    },
+    setExpenses(state, payload) {
+        state.expenses = [];
+        state.expenses = payload;
+    },
+    setExpenseCategories(state, payload) {
+        state.expenseCategories = [];
+        state.expenseCategories = payload;
     }
 }

@@ -3,12 +3,13 @@ import mutations from './mutations';
 import getters from './getters';
 
 export default {
-    namespaced: true,
+  namespaced: true,
     state() {
         return {
-            income: [],
-            filteredIncome: [],
-            incomeCategories: []
+          user: {},
+          token: "",
+          isLoggedIn: false,
+          autoLogout: false
         };
     },
     actions,

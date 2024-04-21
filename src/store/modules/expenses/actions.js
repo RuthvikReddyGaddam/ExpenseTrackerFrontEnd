@@ -1,49 +1,108 @@
 export default {
-    deleteExpense(context, payload) {
-         //     const token = context.rootGetters.token;
+  async deleteExpense(context, payload) {
+    const token = payload.token;
 
-    // const response = await fetch(
-    //   `https://vue-http-demo-85e9e.firebaseio.com/coaches/${userId}.json?auth=` +
-    //     token,
-    //   {
-    //     method: 'PUT',
-    //     body: JSON.stringify(coachData)
-    //   }
-    // );
-    // if (!response.ok) {
-    //     // error ...
-    //   }
-  
-    //   context.commit('registerCoach', {
-    //     ...coachData,
-    //     id: userId
-    //   });
-        context.commit('deleteExpense',payload);
-    },
-    addExpense(context, payload) {
-    //     const token = context.rootGetters.token;
-
-    // const response = await fetch(
-    //   `https://vue-http-demo-85e9e.firebaseio.com/coaches/${userId}.json?auth=` +
-    //     token,
-    //   {
-    //     method: 'PUT',
-    //     body: JSON.stringify(coachData)
-    //   }
-    // );
-    // if (!response.ok) {
-    //     // error ...
-    //   }
-  
-    //   context.commit('registerCoach', {
-    //     ...coachData,
-    //     id: userId
-    //   });
-        context.commit('addExpense',payload);
-    },
-    filteredExpenses(context, payload) {
-        context.commit("filteredExpenses", payload)
+    const response = await fetch(
+      `${context.rootState.backendUrl}/deleteExpense`,
+      {
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json'
+        },
+        method: 'DELETE',
+        body: JSON.stringify({_id: payload._id, amount: payload.amount})
+      }
+    );
+    if (!response.ok) {
+      // error ...
     }
+
+    context.commit('deleteExpense', payload);
+  },
+
+  async addExpense(context, payload) {
+    const token = payload.token;
+    const response = await fetch(`${context.rootState.backendUrl}/newExpense`, {
+      method: 'POST',
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload.expense)
+    })
+    let responseData = await response.json()
+    if (!response.ok) {
+      // error ...
+    }
+
+    context.commit('addExpense', responseData);
+  },
+  filteredExpenses(context, payload) {
+    context.commit("filteredExpenses", payload)
+  },
+
+  async loadExpenses(context, payload) {
+    const token = payload.token;
+    const response = await fetch(
+      `${context.rootState.backendUrl}/expenses`,
+      {
+        headers: {
+          'Authorization': token
+        }
+      }
+    );
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      const error = new Error(responseData.message || 'Failed to load expenses!');
+      throw error;
+    }
+    const expenses = []
+    if(responseData.length>0){
+      for (let response of responseData) {
+        let expense = {
+          amount: response.amount,
+          categoryId: response.categoryId,
+          date: response.date,
+          description: response.description,
+          paymentType: response.paymentType,
+          receipt: response.receipt,
+          title: response.title,
+          user: response.user,
+          _id: response._id,
+        }
+        expenses.push(expense);
+    }
+    
+    }
+    context.commit('setExpenses', expenses);
+    // context.commit('setFetchTimestamp');
+  },
+  async setExpenseCategories(context, payload){
+    const token = payload.token;
+    const response = await fetch(
+      `${context.rootState.backendUrl}/categories/expenses`,
+      {
+        headers: {
+          'Authorization': token
+        }
+      }
+    );
+    const responseData = await response.json();
+    if (!response.ok) {
+      const error = new Error(responseData.message || 'Failed to load categories!');
+      throw error;
+    }
+    const categories = []
+      for (let response of responseData) {
+        let category = {
+          _id: response._id,
+          categoryName: response.categoryName
+        }
+        categories.push(category);
+    }
+    context.commit('setExpenseCategories', categories);
+  }
 
 
 }

@@ -1,6 +1,6 @@
 <template>
  <div>
-    <img :src="photo_url" alt="Receipt Image" class="small-image" @click="openModal" />
+    <img :src="imageAddress" alt="Image" class="small-image" @click="openModal" />
 
     <div v-if="showModal" class="modal">
       <div class="modal-content">
@@ -15,7 +15,7 @@
 
 <script>
 export default {
-    props: ['photo_url'],
+    props: ['imageAddress'],
   data() {
     return {
       showModal: false,
@@ -23,6 +23,7 @@ export default {
   },
   methods: {
     openModal() {
+      console.log(this.imageAddress)
       this.showModal = true;
     },
     closeModal() {

@@ -1,19 +1,19 @@
 <template>
- <base-card hasTitle="true">
+ <base-card :hasTitle="true" :hasBody="false">
 <template #title>
-  <h2>Total Expenses: ${{ totalExpenses }}</h2>
+  <h2>Total Expenses: ${{ allExpensesTotal}}</h2>
 </template>
 </base-card>
   <div class="expense">
 
    <div class="form">
-    <base-card hasBody="true">
-      <expense-form></expense-form>
+    <base-card :hasTitle="false" :hasBody="true">
+      <expense-form :token="getToken"></expense-form>
     </base-card>
     </div>
 
     <div class="list">
-      <expense-list></expense-list>
+      <expense-list :token="getToken"></expense-list>
       
     </div>
   </div>
@@ -25,17 +25,16 @@ import ExpenseForm from "../../components/expenses/ExpenseForm";
 
 export default {
   components: { ExpenseList, ExpenseForm },
-  data() {
-    return {
-      
-    };
-    
-  },
   computed: {
-      totalExpenses () {
-        return this.$store.getters['expenses/totalExpenses'];
+    allExpensesTotal() {
+      return this.$store.getters["expenses/allExpensesTotal"];
+    },
+    getToken() {
+        return this.$store.getters["auth/getToken"]
       }
-    }
+
+    },
+
 };
 </script>
 

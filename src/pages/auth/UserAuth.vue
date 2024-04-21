@@ -1,56 +1,53 @@
 <template>
-  <button @click="setSelectedComponent('LoginAuth')">Login</button>
-  <button @click="setSelectedComponent('SignupAuth')">Sign Up</button>
+<div class="container">
+  <div class="switchButton">
+    <button @click="setSelectedComponent('LoginAuth')">Login</button>
+    <button @click="setSelectedComponent('SignupAuth')">Sign Up</button>
+  </div>
   <component :is="componentId"></component>
+</div>
 </template>
 
 <script>
-import LoginAuth from '../../components/auth/LoginAuth.vue'
-import SignupAuth from '../../components/auth/SignupAuth.vue'
+import LoginAuth from "../../components/auth/LoginAuth.vue";
+import SignupAuth from "../../components/auth/SignupAuth.vue";
 export default {
-  components: {LoginAuth, SignupAuth},
+  components: { LoginAuth, SignupAuth },
   data() {
     return {
-    componentId: 'LoginAuth'
-  }},
-  methods: {
-    setSelectedComponent(cmp){
-      this.componentId = cmp
-    }
+      componentId: "LoginAuth",
+    };
   },
-
+  methods: {
+    setSelectedComponent(cmp) {
+      this.componentId = cmp;
+    },
+  },
 };
 </script>
 
-<style>
-form {
-  margin: 1rem;
-  padding: 1rem;
+<style scoped>
+
+.container{
+display: flex;
+flex-direction: column;
+align-items: center;
 }
 
-.form-control {
-  margin: 0.5rem 0;
+
+.switchButton{
+  display: flex;
+  margin: 10px;
+  width: 60%;
+
+  button{
+    width: 100%;
+    padding: 10px;
+    border: 0.5px solid white;
+    background-color: black;
+    color: white;
+    border-radius: 3px;
+  }
 }
 
-label {
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-input,
-textarea {
-  display: block;
-  width: 100%;
-  font: inherit;
-  border: 1px solid #ccc;
-  padding: 0.15rem;
-}
-
-input:focus,
-textarea:focus {
-  border-color: #3d008d;
-  background-color: #faf6ff;
-  outline: none;
-}
 </style>

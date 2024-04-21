@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h4 v-if="!isValid">Invalid submission. Provide valid information!</h4>
+    <h4 v-if="!isValid">{{ error }}</h4>
     <form @submit.prevent="formSubmit">
       <div>
         <label for="title">Income Title</label>
@@ -9,17 +9,24 @@
 
       <div>
         <label for="amount">Income Amount</label>
-        <input type="number" v-model.trim="amount" id="amount" placeholder="$" />
+        <input
+          type="number"
+          v-model.trim="amount"
+          id="amount"
+          placeholder="$"
+        />
       </div>
 
       <div>
         <label for="category">category</label>
         <select v-model="category" id="category">
-          <option value="salary">Salary</option>
-          <option value="freelance">Freelance</option>
-          <option value="business">Business</option>
-          <option value="investment">Investment</option>
-          <option value="other">Other</option>
+          <option
+            v-for="category in incomeCategories"
+            :key="category._id"
+            :value="category.categoryName"
+          >
+            {{ category.categoryName }}
+          </option>
         </select>
       </div>
 
@@ -40,20 +47,21 @@
       <div>
         <label for="description">Description</label>
         <textarea
-        v-model.trim="description"
+          v-model.trim="description"
           id="description"
           cols="30"
           rows="5"
         ></textarea>
       </div>
 
-      <button>Submit</button>
+      <button class="submitButton">Submit</button>
     </form>
   </div>
 </template>
 
 <script>
 export default {
+  props: ["token"],
   data() {
     return {
       title: "",
@@ -62,8 +70,14 @@ export default {
       category: "",
       payment: "",
       description: "",
+      error: 'Invalid submission. Provide valid information!',
       isValid: true,
     };
+  },
+  computed: {
+    incomeCategories() {
+      return this.$store.getters["income/getIncomeCategories"];
+    },
   },
   methods: {
     validateForm() {
@@ -86,14 +100,37 @@ export default {
         title: this.title,
         amount: Number(this.amount),
         date: this.date,
-        category: this.category,
+        categoryName: this.category,
         paymentType: this.payment,
         description: this.description,
+        user: null,
       };
       if (this.isValid) {
-        this.$store.dispatch("income/addIncome", incomeItem);
+        try{
+        this.$store.dispatch("auth/updateBalance", {
+          type: "income",
+          amount: incomeItem.amount,
+        });
+        this.$store.dispatch("income/addIncome", {
+          token: this.token,
+          incomeItem: incomeItem,
+        });
+      } catch (err) {
+        this.error = err.message || 'Failed to add income! Try again later.';
+      }
+        this.this.title = "";
+        this.amount = 0;
+        this.date = "";
+        this.category = "";
+        this.payment = "";
+        this.description = "";
       }
     },
+  },
+  async created() {
+    await this.$store.dispatch("income/setIncomeCategories", {
+      token: this.token,
+    });
   },
 };
 </script>
@@ -124,5 +161,17 @@ select {
   width: 100%;
   border: 1 px solid black;
   border-radius: 5px;
+}
+.submitButton {
+  margin-top: 10px;
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: black;
+  width: 100%;
+  color: white;
+}
+.submitButton:hover {
+  background-color: gray;
 }
 </style>

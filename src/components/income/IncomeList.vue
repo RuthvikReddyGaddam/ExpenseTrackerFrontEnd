@@ -1,17 +1,19 @@
 <template>
   <div class="ul-container">
-    <ul>
-      <income-item
-        v-for="incomeItem in income"
+    <h2 v-if="income.length === 0">No income data found!</h2>
+    <ul v-else >
+      <income-item v-for="incomeItem in income"
         :key="incomeItem._id"
         :_id="incomeItem._id"
         :title="incomeItem.title"
         :description="incomeItem.description"
         :amount="incomeItem.amount"
-        :category="incomeItem.category_id"
+        :category="incomeItem.categoryId.categoryName"
+        :categoryId="incomeItem.categoryId._id"
         :paymentType="incomeItem.paymentType"
         :incomeImage="incomeItem.incomeImage"
         :date="dateString(incomeItem.date)"
+        :token="token"
       ></income-item>
     </ul>
   </div>
@@ -21,6 +23,7 @@
 import IncomeItem from "./IncomeItem.vue";
 export default {
   components: { IncomeItem },
+  props: ["token"],
   data() {
     return {
     };
@@ -28,6 +31,9 @@ export default {
   computed: {
     income() {
       return this.$store.getters['income/income']
+    },
+    userId() {
+      return this.$store.getters.getUserId;
     }
   },
   methods: {
@@ -42,7 +48,13 @@ export default {
       }
       else return ''
        
+    },
+    async loadIncome() {
+      await this.$store.dispatch("income/loadIncome", {token: this.token});
     }
+  },
+  created() {
+    this.loadIncome();
   }
 };
 </script>

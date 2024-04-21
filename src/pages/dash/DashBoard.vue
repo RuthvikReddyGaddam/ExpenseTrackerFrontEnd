@@ -1,5 +1,5 @@
 <template>
-  <base-card :hasBody="false" :hasTitle="true">
+   <base-card :hasBody="false" :hasTitle="true">
     <template v-slot:title>
       <h1>Dashboard</h1>
     </template>
@@ -17,8 +17,8 @@
         <label for="toDate">To</label>
         <input type="date" v-model="toDate" />
       </div>
-      <button @click="updateFilters" class="filterButton">Filter</button>
     </div>
+    <button @click="updateFilters" class="filterButton">Filter</button>
     <div class="budget-goals" v-if="!editBudgetGoals">
       <div>Budget ${{ budget }}</div>
       <div>Goals {{ goals }}</div>
@@ -26,15 +26,16 @@
     <div class="budget-goals" v-else>
       <div>
         <label for="budget">Budget</label>
-        <input
-          type="number"
-          v-model.trim="newBudget"
-          id="budget"
-        />
+        <input type="number" v-model.trim="newBudget" id="budget" />
       </div>
       <div>
         <label for="goals">Goals</label>
-        <textarea v-model.trim="newGoals" id="goals" cols="30" rows="2"></textarea>
+        <textarea
+          v-model.trim="newGoals"
+          id="goals"
+          cols="30"
+          rows="2"
+        ></textarea>
       </div>
     </div>
     <button @click="updateBudgetGoals" class="updateButton">
@@ -42,6 +43,9 @@
     </button>
     <div v-if="revealComponent">
       <chart-component></chart-component>
+    </div>
+    <div v-if="showError">
+      <h3>No expenses or Income found in the filtered Dates!</h3>
     </div>
   </base-card>
 
@@ -51,11 +55,11 @@
     </template>
 
     <div class="summary">
-      <h3 id="income" :style="{ width: incomeWidth }">
+      <h3 id="income" :style="{ width: incomeWidth }" v-if="totalIncome>0">
         Total Income: {{ totalIncome }}
       </h3>
 
-      <h3 id="expense" :style="{ width: expenseWidth }">
+      <h3 id="expense" :style="{ width: expenseWidth }" v-if="totalExpenses>0">
         Total Expenses : {{ totalExpenses }}
       </h3>
     </div>
@@ -65,13 +69,12 @@
 </template>
 
 <script>
-import ChartComponent from "./ChartComponent";
+import ChartComponent from "../../components/dash/ChartComponent";
 import { mapGetters } from "vuex";
-// import InfoComponent from "./InfoComponent";
+
 export default {
   components: {
     ChartComponent,
-    // InfoComponent
   },
   data() {
     return {
@@ -82,15 +85,19 @@ export default {
       buttonContent: "Update Budget & Goals",
       newBudget: 0,
       newGoals: "",
+      budget: 0,
+      goals: "",
+      showError: false,
     };
   },
   computed: {
+    getUserId(){
+      return this.$store.getters.getUserId;
+    },
     ...mapGetters("income", ["totalIncome", "income", "filteredIncome"]),
-    ...mapGetters("expenses", [
-      "totalExpenses",
-      "expenses",
-      "filteredExpenses",
-    ]),
+    ...mapGetters("auth", ["getToken"]),
+    // ...mapState("auth", ["budget", "goals"]),
+    ...mapGetters("expenses", ["totalExpenses", "expenses", "filteredExpenses"]),
     incomeWidth() {
       return `${
         (this.totalIncome / (this.totalIncome + this.totalExpenses)) * 100
@@ -100,13 +107,7 @@ export default {
       return `${
         (this.totalExpenses / (this.totalIncome + this.totalExpenses)) * 100
       }%`;
-    },
-    budget() {
-      return this.$store.getters.budget;
-    },
-    goals() {
-      return this.$store.getters.goals;
-    },
+    }
   },
   methods: {
     filterItem(fromDate, toDate, item) {
@@ -116,41 +117,46 @@ export default {
       });
     },
     updateFilters() {
+      this.revealComponent = false;
       const fromDate = new Date(this.fromDate);
       const toDate = new Date(this.toDate);
       if (this.fromDate && this.toDate && this.fromDate <= this.toDate) {
+        console.log("here")
         const filteredIncome = this.filterItem(fromDate, toDate, this.income);
-        const filteredExpenses = this.filterItem(
-          fromDate,
-          toDate,
-          this.expenses
-        );
-        this.$store.dispatch("expenses/filteredExpenses", filteredExpenses);
-        this.$store.dispatch("income/filteredIncome", filteredIncome);
-        this.revealComponent = true;
-        console.log(this.revealComponent);
-      } else {
-        return;
+        const filteredExpenses = this.filterItem(fromDate, toDate, this.expenses);
+        if (filteredExpenses.length > 0 || filteredIncome.length > 0) {
+          this.revealComponent = true;
+          this.showError = false;
+          this.$store.dispatch("expenses/filteredExpenses", filteredExpenses);
+          this.$store.dispatch("income/filteredIncome", filteredIncome);
+        } else {
+          this.showError = true;
+        }
       }
     },
-    updateBudgetGoals() {
 
-      if (this.editBudgetGoals && this.newBudget>=0 && this.newGoals!== '') {
-        this.$store.dispatch("updateBudgetGoals", {
+
+  async updateBudgetGoals() {
+      if (this.editBudgetGoals && this.newBudget > 0 && this.newGoals !== "" && (this.newBudget !== this.budget || this.newGoals !== this.goals)) {
+        await this.$store.dispatch("auth/updateBudgetGoals", {
+          token: this.getToken,
           budget: this.newBudget,
           goals: this.newGoals,
         });
-
-        this.editBudgetGoals = !this.editBudgetGoals;
-
+        this.budget = this.$store.getters["auth/budget"]
+        this.goals = this.$store.getters["auth/goals"]
+        this.editBudgetGoals = false;
+        this.buttonContent = "Update Budget & Goals";
       } else {
-        if(this.editBudgetGoals){
-          this.buttonContent = "Update Budget & Goals";
-        }else this.buttonContent = "Submit Changes";
-        this.editBudgetGoals = !this.editBudgetGoals;
+        this.editBudgetGoals = true;
+        this.buttonContent = "Submit Changes";
       }
     },
   },
+async mounted() {
+    this.budget = this.$store.getters["auth/budget"];
+    this.goals = this.$store.getters["auth/goals"];
+  }
 };
 </script>
 
@@ -173,11 +179,18 @@ export default {
     padding: 5px;
   }
 }
-
-.updateButton {
+button:hover {
+  background-color: gray;
+}
+button {
+  align-items: center;
   width: 100%;
-  margin: 10px;
-  padding: 10px;
+  margin-bottom: 0.5rem;
+  padding: 5px;
+  border: 1px solid rgba(135, 132, 132, 0.492);
+  background-color: rgb(0, 0, 0);
+  color: white;
+  border-radius: 5px;
 }
 
 .summary {

@@ -15,20 +15,7 @@
 
 <script>
 export default {
-  props: {
-    hasTitle: {
-      type: Boolean,
-      required: true,
-    },
-    image_url: {
-      type: String,
-      required: false,
-    },
-    hasBody: {
-      type: Boolean,
-      required: true
-    },
-  },
+  props: ["hasTitle", "hasBody", "imageUrl"],
 };
 </script>
 
@@ -39,7 +26,7 @@ export default {
   padding: 10px;
   margin: 20px;
 
-background-color: rgba(255, 255, 255, 0.299);
+background-color: rgba(255, 255, 255, 0.66);
 border-radius: 16px;
 box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 backdrop-filter: blur(11.7px);

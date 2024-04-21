@@ -6,13 +6,22 @@ export default {
           }
           return totalSum;
     },
+    allIncomeTotal(state) {
+      let totalSum = 0;
+      for (let i = 0; i < state.income.length; i++) {
+          totalSum += state.income[i].amount;
+        }
+        return totalSum;
+
+  },
     income(state) {
         return state.income;
     },
     pieChartIncome(state) {
         const categoryTotals = state.filteredIncome.reduce((totals, item) => {
-          const { categoryId, amount } = item;
-          totals[categoryId] = (totals[categoryId] || 0) + amount;
+          const categoryName = item.categoryId.categoryName;
+          const amount = item.amount;
+          totals[categoryName] = (totals[categoryName] || 0) + amount;
           return totals;
         }, {});
       
@@ -25,5 +34,15 @@ export default {
       const incomeDate = state.filteredIncome.map(incomeItem => (incomeItem.date));
       const incomeData = state.filteredIncome.map(incomeItem => ({ x: incomeItem.date, y: incomeItem.amount }));
       return [incomeData, incomeDate];
+      },
+      getIncomeCategories(state){
+        return state.incomeCategories;
+      },
+      getIncomeCsvData(state){
+        let data = [];
+        for(let income of state.filteredIncome){
+          data.push([income.date, income.title, `+${income.amount}`, income.description, income.categoryId.categoryName])
+        }
+        return data;
       }
 };

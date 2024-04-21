@@ -1,13 +1,17 @@
 <template>
-    <h2>Total Income: ${{ totalIncome }}</h2>
+    <base-card :hasTitle="true" :hasBody="false">
+   <template #title>
+    <h2>Total Income: ${{ allIncomeTotal }}</h2>  
+  </template>
+  </base-card>
      <div class="income">
        <div class="form">
-<base-card hasBody="true">
-<income-form></income-form>
+<base-card :hasTitle="false" :hasBody="true">
+<income-form :token="getToken"></income-form>
 </base-card>
        </div>
        <div class="list">
-         <income-list></income-list>
+         <income-list :token="getToken"></income-list>
        </div>
      </div>  
    </template>
@@ -19,21 +23,17 @@
    export default {
      components: { IncomeList, IncomeForm },
      computed: {
-      totalIncome () {
-        return this.$store.getters['income/totalIncome'];
+      allIncomeTotal() {
+      return this.$store.getters["income/allIncomeTotal"];
+    },
+      getToken() {
+        return this.$store.getters["auth/getToken"];
       }
     }
    };
    </script>
    
    <style scoped>
-   h2{
-     text-align: center;
-     padding: 30px;
-     border-radius: 10px;
-     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-     margin: 20px;
-   }
    .income{
        display: flex;
   
@@ -44,8 +44,6 @@
      padding: 10px; 
      margin: 10px;
      height: 100%;
-
-
    }
 
 

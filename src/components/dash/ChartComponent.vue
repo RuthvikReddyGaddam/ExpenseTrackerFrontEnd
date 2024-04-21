@@ -1,14 +1,19 @@
 <template>
-  <div class="main-container">
+<div class="main-container">
+  <button @click="downloadCSV">Download data as an Excel sheet</button>
+  <a v-if="revealLink" :href="downloadLink">Click to Download Csv</a>
     <div class="line-chart">
       <Line :data="lineData" :options="lineChartOptions" />
     </div>
     <div class="pie-charts">
       <div class="left-pie">
-        <Pie :data="expenseData" :options="expensePieOptions" />
+        <Pie :data="expenseData" :options="expensePieOptions" v-if="expenseData.datasets[0].data.length > 0"/>
+        <p v-else>No expenses found between these dates!</p>
       </div>
       <div class="right-pie">
-        <Pie :data="incomeData" :options="incomePieOptions" />
+
+        <Pie :data="incomeData" :options="incomePieOptions" v-if="incomeData.datasets[0].data.length > 0"/>
+        <p v-else>No income found between these dates!</p>
       </div>
     </div>
   </div>
@@ -27,7 +32,6 @@ import {
   ArcElement,
 } from "chart.js";
 import { Line, Pie } from "vue-chartjs";
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -43,10 +47,12 @@ export default {
   name: "App",
   components: {
     Line,
-    Pie,
+    Pie
   },
   data() {
     return {
+      downloadLink: "",
+      revealLink: false,
       lineData: {},
       lineChartOptions: {
         responsive: true,
@@ -84,6 +90,14 @@ export default {
         },
       },
     };
+  },
+  computed: {
+    expenseCsv() {
+      return this.$store.getters["expenses/getExpenseCsvData"];
+    },
+    incomeCsv() {
+      return this.$store.getters["income/getIncomeCsvData"];
+    }
   },
   methods: {
     randomNumber(num) {
@@ -141,12 +155,21 @@ export default {
           },
         });
       }
-
       this.expenseData = val[0];
       this.incomeData = val[1];
-
-
     },
+    downloadCSV(){
+      let combinedData = [...this.expenseCsv, ...this.incomeCsv];
+      combinedData.sort((prev, curr) => new Date(prev[0]) - new Date(curr[0]));
+      
+      let data = "date,title,amount,description,categoryName\n";
+      combinedData.forEach(row => {
+        data += row.join(',') + '\n'
+      });
+      const blob = new Blob([data], { type: 'text/csv;charset=utf-8,' });
+      this.revealLink = true;
+      this.downloadLink = URL.createObjectURL(blob);
+    }
   },
 
   beforeMount() {
@@ -189,5 +212,15 @@ export default {
 .right-pie {
   flex: 1;
   width: 100%;
+}
+button {
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  padding: 5px;
+  border: 1px solid rgba(135, 132, 132, 0.492);
+  background-color: rgb(0, 0, 0);
+  color: white;
+  border-radius: 5px;
 }
 </style>
