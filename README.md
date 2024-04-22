@@ -22,6 +22,7 @@ Routing: Vue Router
 ## Project setup
 ```
 npm install
+change backend url in global state
 ```
 
 ### Compiles and hot-reloads for development
