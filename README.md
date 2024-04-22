@@ -1,7 +1,7 @@
 # expense-tracker
 
 ## Overview
-This project aims to deliver a comprehensive expense tracking website where users can efficiently manage their spending. The website provides tools for tracking expenses by categories, analyzing spending habits, setting budgets, and generating insightful reports.
+This app aims to deliver a comprehensive expense tracking website where users can efficiently manage their spending. The website provides tools for tracking expenses by categories, analyzing spending habits, setting budgets, and generating insightful reports.
 
 ## Features
 1. Expense and Income Tracking by Categories: Users can track expenses based on categories such as subscriptions, rent, healthcare, and more.
