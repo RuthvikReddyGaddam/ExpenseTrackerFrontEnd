@@ -111,13 +111,14 @@ export default {
         ) {
           url = await this.uploadProfile();
         }
+        const DoB = new Date(this.DoB);
       const user = {
         email: this.email,
         password: this.password,
         phone: this.phone,
         fullname: this.fullname,
         address: this.address,
-        DoB: Date(this.DoB),
+        DoB: DoB,
         balance: 0,
         budget: 0,
         goals: "No Goal Setup",

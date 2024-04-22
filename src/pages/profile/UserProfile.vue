@@ -1,10 +1,10 @@
 <template>
-  <base-card :hasTitle="true" :hasBody="false">
+  <base-card :hasTitle="true" :hasBody="false" v-if="user">
     <template #title>
       <h1>User Profile</h1>
     </template>
   </base-card>
-  <base-card :hasTitle="true" :hasBody="true">
+  <base-card :hasTitle="true" :hasBody="true" v-if="user">
     <template #title>
       <h1>{{ user.fullname }}</h1>
     </template>
