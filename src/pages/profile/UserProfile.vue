@@ -17,7 +17,7 @@
         <label>Address</label><p> {{ user.address }}</p>
         <label>Phone</label><p> +1 {{ user.phone }}</p>
         <label>Gender</label><p> {{ user.gender }}</p>
-        <label>Date of Birth</label><p> {{ new Date(user.DoB) }}</p>
+        <label>Date of Birth</label><p> {{ user.DoB}}</p>
         <label>Current Balance</label><p>${{ user.balance }}</p>
         <label>Budget</label><p> ${{ user.budget }}</p>
         <label>Current Goals</label><p> {{ user.goals }}</p>

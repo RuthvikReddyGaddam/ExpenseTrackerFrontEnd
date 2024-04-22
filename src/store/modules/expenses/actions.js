@@ -32,7 +32,8 @@ export default {
     })
     let responseData = await response.json()
     if (!response.ok) {
-      // error ...
+      const error = new Error(responseData.message || 'Failed to add expenses!');
+      throw error;
     }
 
     context.commit('addExpense', responseData);
@@ -63,7 +64,7 @@ export default {
         let expense = {
           amount: response.amount,
           categoryId: response.categoryId,
-          date: response.date,
+          date: new Date(response.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }) ,
           description: response.description,
           paymentType: response.paymentType,
           receipt: response.receipt,

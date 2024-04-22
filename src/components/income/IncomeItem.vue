@@ -1,10 +1,11 @@
 <template>
   <li class="list-item">
     <div class="item-content">
-      <base-modal :showModal="false"></base-modal>
+      <base-modal :showModal="false" :imageAddress="imageAddress"></base-modal>
       <div class="text-elements">
         <h3>{{ title }}</h3>
-        <p>{{ description }} {{ amount }} {{ category }} {{ date }}</p>
+        <p>${{ amount }} on {{ category }} - {{ date }}</p>
+        <p>{{ description }}</p>
       </div>
       <button class="delete-button" @click="deleteIncome(_id)">Delete</button>
     </div>

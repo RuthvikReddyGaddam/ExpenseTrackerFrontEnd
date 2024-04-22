@@ -42,7 +42,7 @@
       {{ buttonContent }}
     </button>
     <div v-if="revealComponent">
-      <chart-component></chart-component>
+      <chart-component :lineData="lineData" :expenseData="expenseData" :incomeData="incomeData"></chart-component>
     </div>
     <div v-if="showError">
       <h3>No expenses or Income found in the filtered Dates!</h3>
@@ -88,15 +88,14 @@ export default {
       budget: 0,
       goals: "",
       showError: false,
+      lineData: {},
+      expenseData: {},
+      incomeData: {},
     };
   },
   computed: {
-    getUserId(){
-      return this.$store.getters.getUserId;
-    },
     ...mapGetters("income", ["totalIncome", "income", "filteredIncome"]),
     ...mapGetters("auth", ["getToken"]),
-    // ...mapState("auth", ["budget", "goals"]),
     ...mapGetters("expenses", ["totalExpenses", "expenses", "filteredExpenses"]),
     incomeWidth() {
       return `${
@@ -125,10 +124,12 @@ export default {
         const filteredIncome = this.filterItem(fromDate, toDate, this.income);
         const filteredExpenses = this.filterItem(fromDate, toDate, this.expenses);
         if (filteredExpenses.length > 0 || filteredIncome.length > 0) {
-          this.revealComponent = true;
           this.showError = false;
           this.$store.dispatch("expenses/filteredExpenses", filteredExpenses);
           this.$store.dispatch("income/filteredIncome", filteredIncome);
+          this.getLineData();
+          this.getPieData();
+          this.revealComponent = true;
         } else {
           this.showError = true;
         }
@@ -152,7 +153,70 @@ export default {
         this.buttonContent = "Submit Changes";
       }
     },
+    randomNumber(num) {
+      return Math.floor(Math.random() * (num + 1));
+    },
+    generateBackgroundColor(color) {
+      let arr = [];
+      for(let i= 0; i< color; i++){
+        arr.push(`rgba(${this.randomNumber(255)},${this.randomNumber(255)},${this.randomNumber(255)},1)`)
+      }
+
+      return arr;
+    },
+
+    getLineData() {
+      const [incomeData, incomeDate] = this.$store.getters['income/lineChartIncome'];
+      const [expenseData, expenseDate] = this.$store.getters['expenses/lineChartExpenses'];
+      let labels = new Set([...incomeDate, ...expenseDate]);
+      labels = Array.from(labels);
+      labels = labels.sort((a,b) => {
+        const dateA = new Date(a);
+        const dateB = new Date(b);
+        return dateA - dateB;
+      })
+      this.lineData = {
+        labels: labels,
+      datasets: [
+        {
+          label: 'Expenses',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1,
+          data: expenseData,
+        },
+        {
+          label: 'Income',
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1,
+          data: incomeData,
+        },
+      ],
+    };
   },
+
+    getPieData() {
+      const getters = [['Spending', "expenses/pieChartExpense"], ["Income", "income/pieChartIncome"]];
+      let val = [];
+      for (let i=0;i<getters.length;i++) {
+        const [dataArray, values] = this.$store.getters[getters[i][1]];
+        const background = this.generateBackgroundColor(dataArray.length);
+         val.push({
+          labels: dataArray,
+          datasets: [{ backgroundColor: background, data: values }],
+          title: {
+            display: true,
+            text: getters[i][0]+" Breakdown by Category",
+            fontSize: 16,
+          },
+        });
+      }
+      this.expenseData = val[0];
+      this.incomeData = val[1];
+    },
+  },
+  
 async mounted() {
     this.budget = this.$store.getters["auth/budget"];
     this.goals = this.$store.getters["auth/goals"];

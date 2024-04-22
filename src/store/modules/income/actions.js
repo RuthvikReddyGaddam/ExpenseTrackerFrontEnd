@@ -2,7 +2,7 @@ export default {
   async deleteIncome(context, payload) {
    const token = payload.token;
 
-    const response = await fetch(
+    await fetch(
       `${context.rootState.backendUrl}/incomeExpenses/deleteIncome`,
       {
         headers: {
@@ -13,9 +13,6 @@ export default {
         body: JSON.stringify({_id: payload._id, amount: payload.amount})
       }
     );
-    if (!response.ok) {
-      // error ...
-    }
 
     context.commit('deleteIncome', payload);
   },
@@ -77,7 +74,7 @@ export default {
     }
 
     context.commit('setIncome', income);
-    // context.commit('setFetchTimestamp');
+
   },
   async setIncomeCategories(context, payload){
     const token = payload.token;

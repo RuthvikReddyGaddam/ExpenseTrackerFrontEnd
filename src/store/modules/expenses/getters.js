@@ -32,8 +32,14 @@ export default {
         return [data, values];
       },
       lineChartExpenses(state){
-        const expenseDate = state.filteredExpenses.map(expense => (expense.date));
-        const expenseData = state.filteredExpenses.map(expense => ({ x: expense.date, y: expense.amount }));
+        let expenseDate = state.filteredExpenses.map(expense => (new Date(expense.date).toLocaleDateString('en-US')));
+        let expenseData = state.filteredExpenses.map(expense => ({ x: new Date(expense.date).toLocaleDateString('en-US'), y: expense.amount }));
+        expenseData = expenseData.sort((a,b) => {
+          const dateA = new Date(a.x);
+          const dateB = new Date(b.x);
+          return dateA-dateB;
+        });
+        console.log(expenseData,"expense getter")
         return [expenseData, expenseDate];
         },
         getExpenseCategories(state){
@@ -42,7 +48,7 @@ export default {
         getExpenseCsvData(state){
           let data = [];
           for(let expense of state.filteredExpenses){
-            data.push([expense.date, expense.title, `-${expense.amount}`, expense.description, expense.categoryId.categoryName])
+            data.push([new Date(expense.date).toLocaleDateString('en-US'), expense.title, `-${expense.amount}`, expense.description, expense.categoryId.categoryName])
           }
           return data;
         }

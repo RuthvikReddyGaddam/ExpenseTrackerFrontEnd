@@ -12,7 +12,7 @@
         :category="expense.categoryId.categoryName"
         :paymentType="expense.paymentType"
         :receipt="expense.receipt"
-        :date="dateString(expense.date)"
+        :date="new Date(expense.date).toLocaleDateString('en-US')"
         :token="token"
       ></expense-item>
     </ul>
@@ -30,9 +30,16 @@ export default {
   },
   computed: {
     expenses() {
-      return this.$store.getters["expenses/expenses"];
-    },
-  },
+      let expense = this.$store.getters["expenses/expenses"];
+    
+        expense = expense.sort((a,b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateA - dateB;
+
+      });
+      return expense;
+  }},
   methods: {
     dateString(date) {
       if (date) {

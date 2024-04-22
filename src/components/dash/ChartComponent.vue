@@ -1,7 +1,7 @@
 <template>
 <div class="main-container">
   <button @click="downloadCSV">Download data as an Excel sheet</button>
-  <a v-if="revealLink" :href="downloadLink">Click to Download Csv</a>
+  <a class="csvLink" v-if="revealLink" :href="downloadLink">Click to Download Csv</a>
     <div class="line-chart">
       <Line :data="lineData" :options="lineChartOptions" />
     </div>
@@ -49,11 +49,11 @@ export default {
     Line,
     Pie
   },
+  props: ["incomeData", "expenseData", "lineData"],
   data() {
     return {
       downloadLink: "",
       revealLink: false,
-      lineData: {},
       lineChartOptions: {
         responsive: true,
         maintainAspectRatio: false,
@@ -65,8 +65,7 @@ export default {
           },
         },
       },
-      expenseData:{},
-      incomeData:{},
+
       expensePieOptions: {
         responsive: true,
         maintainAspectRatio: false,
@@ -100,68 +99,12 @@ export default {
     }
   },
   methods: {
-    randomNumber(num) {
-      return Math.floor(Math.random() * (num + 1));
-    },
-    generateBackgroundColor(color) {
-      let arr = [];
-      for(let i= 0; i< color; i++){
-        arr.push(`rgba(${this.randomNumber(255)},${this.randomNumber(255)},${this.randomNumber(255)},1)`)
-      }
-
-      return arr;
-    },
-
-    getLineData() {
-      const [incomeData, incomeDate] = this.$store.getters['income/lineChartIncome'];
-      const [expenseData, expenseDate] = this.$store.getters['expenses/lineChartExpenses'];
-      let labels = new Set([...incomeDate, ...expenseDate]);
-      labels = [...labels];
-      this.lineData = {
-        labels: labels,
-      datasets: [
-        {
-          label: 'Expenses',
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgba(255, 99, 132, 1)',
-          borderWidth: 1,
-          data: expenseData,
-        },
-        {
-          label: 'Income',
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1,
-          data: incomeData,
-        },
-      ],
-    };
-  },
-
-    getPieData() {
-
-      const getters = [['Spending', "expenses/pieChartExpense"], ["Income", "income/pieChartIncome"]];
-      let val = [];
-      for (let i=0;i<getters.length;i++) {
-        const [dataArray, values] = this.$store.getters[getters[i][1]];
-        const background = this.generateBackgroundColor(dataArray.length);
-         val.push({
-          labels: dataArray,
-          datasets: [{ backgroundColor: background, data: values }],
-          title: {
-            display: true,
-            text: getters[i][0]+" Breakdown by Category",
-            fontSize: 16,
-          },
-        });
-      }
-      this.expenseData = val[0];
-      this.incomeData = val[1];
-    },
+  
     downloadCSV(){
+      this.revealLink = false;
       let combinedData = [...this.expenseCsv, ...this.incomeCsv];
       combinedData.sort((prev, curr) => new Date(prev[0]) - new Date(curr[0]));
-      
+      console.log(combinedData);
       let data = "date,title,amount,description,categoryName\n";
       combinedData.forEach(row => {
         data += row.join(',') + '\n'
@@ -171,13 +114,6 @@ export default {
       this.downloadLink = URL.createObjectURL(blob);
     }
   },
-
-  beforeMount() {
-   this.getLineData();
-   this.getPieData();
-  },
-
-
 };
 </script>
 
@@ -215,6 +151,22 @@ export default {
 }
 button {
   align-items: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  padding: 5px;
+  border: 1px solid rgba(135, 132, 132, 0.492);
+  background-color: rgb(0, 0, 0);
+  color: white;
+  border-radius: 5px;
+}
+button.hover{
+  background-color: gray;
+}
+.csvLink{
+  text-decoration: none;
+  font-size: 13px;
+  align-items: center;
+  text-align: center;;
   width: 100%;
   margin-bottom: 0.5rem;
   padding: 5px;

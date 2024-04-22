@@ -31,8 +31,14 @@ export default {
         return [data, values];
       },
       lineChartIncome(state){
-      const incomeDate = state.filteredIncome.map(incomeItem => (incomeItem.date));
-      const incomeData = state.filteredIncome.map(incomeItem => ({ x: incomeItem.date, y: incomeItem.amount }));
+      let incomeDate = state.filteredIncome.map(incomeItem => (new Date(incomeItem.date).toLocaleDateString('en-US')));
+      let incomeData = state.filteredIncome.map(incomeItem => ({ x: new Date(incomeItem.date).toLocaleDateString('en-US'), y: incomeItem.amount }));
+      incomeData = incomeData.sort((a,b) => {
+        const dateA = new Date(a.x);
+        const dateB = new Date(b.x);
+        return dateA-dateB;
+      });
+      console.log(incomeData,"income getter")
       return [incomeData, incomeDate];
       },
       getIncomeCategories(state){
@@ -41,7 +47,7 @@ export default {
       getIncomeCsvData(state){
         let data = [];
         for(let income of state.filteredIncome){
-          data.push([income.date, income.title, `+${income.amount}`, income.description, income.categoryId.categoryName])
+          data.push([new Date(income.date).toLocaleDateString('en-US'), income.title, `+${income.amount}`, income.description, income.categoryId.categoryName])
         }
         return data;
       }

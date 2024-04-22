@@ -28,10 +28,6 @@ export default {
       }
     },
   },
-  async onMounted() {
-    await this.$store.dispatch("expenses/loadExpenses", {token: this.getToken});
-    await this.$store.dispatch("income/loadIncome", {token: this.getToken}); 
-  },
 };
 </script>
 

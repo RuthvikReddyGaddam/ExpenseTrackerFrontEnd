@@ -94,8 +94,10 @@ export default {
       }
     },
     formSubmit() {
-      this.date = new Date(this.date);
+
       this.validateForm();
+      if (this.isValid) {
+      this.date = new Date(this.date);
       const incomeItem = {
         title: this.title,
         amount: Number(this.amount),
@@ -105,7 +107,7 @@ export default {
         description: this.description,
         user: null,
       };
-      if (this.isValid) {
+
         try{
         this.$store.dispatch("auth/updateBalance", {
           type: "income",
@@ -118,7 +120,7 @@ export default {
       } catch (err) {
         this.error = err.message || 'Failed to add income! Try again later.';
       }
-        this.this.title = "";
+        this.title = "";
         this.amount = 0;
         this.date = "";
         this.category = "";

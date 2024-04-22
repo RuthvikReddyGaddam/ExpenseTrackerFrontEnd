@@ -1,8 +1,9 @@
 <template>
   <div class="ul-container">
     <h2 v-if="income.length === 0">No income data found!</h2>
-    <ul v-else >
-      <income-item v-for="incomeItem in income"
+    <ul v-else>
+      <income-item
+        v-for="incomeItem in income"
         :key="incomeItem._id"
         :_id="incomeItem._id"
         :title="incomeItem.title"
@@ -12,7 +13,7 @@
         :categoryId="incomeItem.categoryId._id"
         :paymentType="incomeItem.paymentType"
         :incomeImage="incomeItem.incomeImage"
-        :date="dateString(incomeItem.date)"
+        :date="new Date(incomeItem.date).toLocaleDateString('en-US')"
         :token="token"
       ></income-item>
     </ul>
@@ -25,37 +26,40 @@ export default {
   components: { IncomeItem },
   props: ["token"],
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     income() {
-      return this.$store.getters['income/income']
+      let incomeItems = this.$store.getters["income/income"];
+      incomeItems = incomeItems.sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateB - dateA;
+      });
+      return incomeItems;
     },
     userId() {
       return this.$store.getters.getUserId;
-    }
+    },
   },
   methods: {
-    dateString(date){
-      if(date){
-        const dateItem = new Date(date).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          });
-          return dateItem;
-      }
-      else return ''
-       
+    dateString(date) {
+      if (date) {
+        const dateItem = new Date(date).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        });
+        return dateItem;
+      } else return "";
     },
     async loadIncome() {
-      await this.$store.dispatch("income/loadIncome", {token: this.token});
-    }
+      await this.$store.dispatch("income/loadIncome", { token: this.token });
+    },
   },
   created() {
     this.loadIncome();
-  }
+  },
 };
 </script>
 

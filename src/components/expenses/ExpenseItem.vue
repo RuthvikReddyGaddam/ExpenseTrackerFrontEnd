@@ -6,7 +6,8 @@
     </base-modal>
       <div class="text-elements">
         <h3>{{ title }}</h3>
-        <p>{{ description }} {{ amount }} {{ category }} {{ date }}</p>
+        <p>${{ amount }} {{ paymentType }} on {{ category }} - {{ date }}</p>
+        <p>{{ description }}</p>
       </div>
       <button class="delete-button" @click="deleteExpense(_id)">Delete</button>
     </div>

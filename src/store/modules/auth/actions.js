@@ -75,7 +75,10 @@ export default {
       context.dispatch('autoLogout');
     }, expiresIn);
 
+  
     context.commit("setUser", {userDetails: userDetails, token: token, isLoggedIn: true});
+    await context.dispatch("expenses/loadExpenses", {token: token}, {root: true});
+    await context.dispatch("income/loadIncome", {token: token}, {root: true}); 
 
   },
   async updateBudgetGoals(context, payload) {

@@ -1,6 +1,6 @@
 export default {
     addIncome(state, payload) {
-        state.income.push(payload);
+        state.income.unshift(payload);
     },
     deleteIncome(state, payload) {
         const index = state.income.findIndex(incomeItem => incomeItem._id === payload._id);

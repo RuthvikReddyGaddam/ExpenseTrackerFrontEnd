@@ -1,6 +1,6 @@
 export default {
     addExpense(state, payload){
-    state.expenses.push(payload);
+    state.expenses.unshift(payload);
     },
     deleteExpense(state, payload){
         const index = state.expenses.findIndex(expense => expense._id === payload._id);
