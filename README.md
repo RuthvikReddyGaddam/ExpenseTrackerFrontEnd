@@ -19,13 +19,26 @@ Charting Library: Chart.js
 State Management: Vuex
 Routing: Vue Router
 
+## Expense Tracker UI
+
+### Signup
 ![Screenshot](images/signup.png)
+
+### Login
 ![Screenshot](images/login.png)
+
+### Profile Page
 ![Screenshot](images/profile.png)
+
+### Dashboard
 ![Screenshot](images/dash1.png)
 ![Screenshot](images/dash2.png)
 ![Screenshot](images/dash3.png)
+
+### Expenses Page
 ![Screenshot](images/exp.png)
+
+### Income Page
 ![Screenshot](images/inc.png)
 
 ## Project setup
