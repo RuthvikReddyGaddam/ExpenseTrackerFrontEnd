@@ -1,5 +1,5 @@
 # expense-tracker
-##Overview
+Overview
 This project aims to deliver a comprehensive expense tracking website where users can efficiently manage their spending. The website provides tools for tracking expenses by categories, analyzing spending habits, setting budgets, and generating insightful reports.
 ## Project setup
 ```
