@@ -19,6 +19,15 @@ Charting Library: Chart.js
 State Management: Vuex
 Routing: Vue Router
 
+![Screenshot](images/signup.png)
+![Screenshot](images/login.png)
+![Screenshot](images/profile.png)
+![Screenshot](images/dash1.png)
+![Screenshot](images/dash2.png)
+![Screenshot](images/dash3.png)
+![Screenshot](images/exp.png)
+![Screenshot](images/inc.png)
+
 ## Project setup
 ```
 npm install
